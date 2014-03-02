@@ -79,7 +79,7 @@
             $item = [NuGet.FrameworkAssemblyReference] $item
             if ($item.AssemblyName -notin $Script:LoadedAssemblyNames)
             {
-                Write-Verbose ($messages.LoadAssembly -f $item.AssemblyName,"")
+                Write-Verbose ($messages.LoadFrameworkAssembly -f $item.AssemblyName)
                 Add-Type -AssemblyName $item.AssemblyName
                 $Script:LoadedAssemblyNames.Add($item.AssemblyName)
             }
