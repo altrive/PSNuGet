@@ -2,6 +2,8 @@
 
 function Main
 {
+[CmdletBinding()]
+param()
     $ErrorActionPreference = "Stop"
     Set-StrictMode -Version Latest
 
@@ -19,7 +21,7 @@ function Main
     }
     finally
     {
-        Write-Verbose ("Cleanup temp directory '{0}'..." -f $extractedPath)
+        Write-Verbose ("Cleanup temp directory '{0}'" -f $extractedPath)
         Remove-Item -path $extractedPath -Force -ErrorAction Ignore -Recurse
     }
 }
@@ -48,14 +50,14 @@ function Get-ZipContentFromUrl
         Unblock-File -Path $tempFilePath
    
         #Extract zip file
-        Write-Verbose ("`tExtract zip content to '{0}'..." -f $tempDir)
+        Write-Verbose ("`tExtract zip content to '{0}'" -f $tempDir)
         Add-Type -AssemblyName System.IO.Compression.FileSystem
         [IO.Compression.ZipFile]::ExtractToDirectory($tempFilePath, $tempDir)
     }
     finally
     {
         #Remove temporary zip file
-        Write-Verbose ("`tRemove downloadedzip file...")
+        Write-Verbose ("`tRemove downloaded zip file")
         Remove-Item -Path $tempFilePath -Force -ErrorAction Ignore
     }
 
@@ -106,7 +108,7 @@ function Install-PSModule
     {
         #Get files under current directory
         $items = Get-ChildItem -File -Recurse
-        Write-Verbose ("Install PowerShell module to '{0}'..." -f $modulePath)
+        Write-Verbose ("Install PowerShell module to '{0}'" -f $modulePath)
         foreach ($item in $items)
         {
             #Relative path to CopyFrom basepath
@@ -129,4 +131,4 @@ function Install-PSModule
 }
 
 #execute Main function
-Main
+Main -Verbose
