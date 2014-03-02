@@ -1,9 +1,10 @@
 ﻿#Requires -Version 3.0
-$ErrorActionPreference = "Stop"
-Set-StrictMode -Version Latest
 
 function Main
 {
+    $ErrorActionPreference = "Stop"
+    Set-StrictMode -Version Latest
+
     if ($PSVersionTable.PSVersion.Major -lt 3){
         Write-Error "PowerShell 3.0 or above required!"
     }
@@ -12,9 +13,9 @@ function Main
     $Url = "https://github.com/altrive/PSNuGet/raw/master/Release/PSNuGet.nupkg"
     try
     {
-        $extractedPath = Get-ZipContentFromUrl -Url $Url -Verbose
-        $contentPath = Join-Path $extractedPath "contents" -Resolve
-        Install-PSModule -ModuleName $ModuleName -Path $contentPath -Target User -Verbose
+        $extractedPath = Get-ZipContentFromUrl -Url $Url
+        $contentPath = Join-Path $extractedPath "content" -Resolve
+        Install-PSModule -ModuleName $ModuleName -Path $contentPath -Target User
     }
     finally
     {
@@ -35,7 +36,7 @@ function Get-ZipContentFromUrl
     #Create temporary work dir
     $tempDir = Join-Path ([IO.Path]::GetTempPath()) ([Guid]::NewGuid())
     $tempFilePath = Join-Path $tempDir "temp.zip"
-    [IO.Directory]::CreateDirectory($tempDir)
+    [IO.Directory]::CreateDirectory($tempDir) > $null
 
     try
     {
@@ -47,14 +48,14 @@ function Get-ZipContentFromUrl
         Unblock-File -Path $tempFilePath
    
         #Extract zip file
-        Write-Verbose ("Extract zip content to '{0}'..." -f $tempDir)
+        Write-Verbose ("`tExtract zip content to '{0}'..." -f $tempDir)
         Add-Type -AssemblyName System.IO.Compression.FileSystem
         [IO.Compression.ZipFile]::ExtractToDirectory($tempFilePath, $tempDir)
     }
     finally
     {
         #Remove temporary zip file
-        Write-Verbose ("Remove zip file...")
+        Write-Verbose ("`tRemove downloadedzip file...")
         Remove-Item -Path $tempFilePath -Force -ErrorAction Ignore
     }
 
@@ -73,8 +74,6 @@ function Install-PSModule
         [ValidateSet("User", "System", "ProgramFiles", "Local")]
         [string] $Target = "User"
     )
-    $ErrorActionPreference = "Stop"
-    Set-StrictMode -Version Latest
 
     if (!(Test-Path $Path -PathType Container))
     {
