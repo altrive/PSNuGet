@@ -43,7 +43,7 @@ function Get-ZipContentFromUrl
     try
     {
         #Download zip file
-        Write-Verbose ("Download file '{0}'" -f $Url)
+        Write-Verbose ("Download file from '{0}'" -f $Url)
         Invoke-WebRequest -Uri $Url -OutFile $tempFilePath -Verbose:$false
 
         #Unblock zip file
