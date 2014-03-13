@@ -136,7 +136,7 @@
         #Import .psm1 script files under "tools" directory, if exists.
         foreach ($file in $psModuleFiles)
         {
-            Write-Verbose ($message.PSModuleImport -f $file.SourcePath)
+            Write-Verbose ($messages.PSModuleImport -f $file.SourcePath)
             Import-Module $file.SourcePath
         }
     }
