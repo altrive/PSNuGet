@@ -1,5 +1,5 @@
 ﻿@{
-    PackageNotFound = "Specified package is not found in repository: PackageId='{0}', Version={1}"
+    PackageNotFound = "Specified package is not found in repository: PackageId='{0}', Version='{1}'"
     InstallPackage = "Install NuGet package ({0})"
     UninstallPackage = "Uninstall NuGet package ({0})"
     PackageInstalled = "NuGet package '{0}' Installed"
