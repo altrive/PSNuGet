@@ -1,23 +1,18 @@
 ﻿#Requires -Version 3.0
+$ErrorActionPreference = "Stop"
+Set-StrictMode -Version Latest
 
 function Main
 {
-[CmdletBinding()]
-param()
-    $ErrorActionPreference = "Stop"
-    Set-StrictMode -Version Latest
+    [CmdletBinding()]
+    param ()
 
-    if ($PSVersionTable.PSVersion.Major -lt 3){
-        Write-Error "PowerShell 3.0 or above required!"
-    }
-
-    $ModuleName = "PSNuGet"
     $Url = "https://github.com/altrive/PSNuGet/raw/master/Release/PSNuGet.nupkg"
     try
     {
         $extractedPath = Get-ZipContentFromUrl -Url $Url
         $contentPath = Join-Path $extractedPath "content" -Resolve
-        Install-PSModule -ModuleName $ModuleName -Path $contentPath -Target User
+        Install-PSModule -ModuleName "PSNuGet" -Path $contentPath -Target User
     }
     finally
     {
@@ -34,6 +29,7 @@ function Get-ZipContentFromUrl
         [Parameter(Mandatory)]
         [string] $Url
     )
+    Add-Type -AssemblyName System.IO.Compression.FileSystem
 
     #Create temporary work dir
     $tempDir = Join-Path ([IO.Path]::GetTempPath()) ([Guid]::NewGuid())
@@ -51,7 +47,6 @@ function Get-ZipContentFromUrl
    
         #Extract zip file
         Write-Verbose ("`tExtract zip content to '{0}'" -f $tempDir)
-        Add-Type -AssemblyName System.IO.Compression.FileSystem
         [IO.Compression.ZipFile]::ExtractToDirectory($tempFilePath, $tempDir)
     }
     finally

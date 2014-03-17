@@ -64,6 +64,7 @@ FunctionsToExport = '*'
 # Cmdlets to export from this module
 CmdletsToExport = @(
     "Initialize-NuGetPackageManager",
+    "Get-NuGetPackageManager",
     "Use-NuGetPackage",
     "Clear-NuGetPackage"
 )

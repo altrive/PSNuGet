@@ -10,6 +10,19 @@
     )
     $ErrorActionPreference = "Stop"
     Set-StrictMode -Version Latest
+
+    #Add repository path from environment variable if exists.
+　　if($env:PSNUGET_REPOSITORY_PATH -ne $null)
+    {
+        $paths = $env:PSNUGET_REPOSITORY_PATH -split ";"
+        foreach($path in $paths)
+        {
+            if(!$Repository.Contains($path))
+            {
+                $Repository.Add("OfficialRepository", $path)
+            }
+        }
+    }
     
     #Setup official NuGet repository paths(Default:$true)
     $officialRepository = "https://packages.nuget.org/api/v2"

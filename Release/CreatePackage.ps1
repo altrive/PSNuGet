@@ -1,5 +1,8 @@
-﻿Set-StrictMode -Version Latest
+﻿param (
+    [switch] $IncludeTestFiles
+)
 $ErrorActionPreference = "Stop"
+Set-StrictMode -Version Latest
 
 Use-NuGetPackage NuGet.Core #-Verbose
 
@@ -21,10 +24,14 @@ $metadata = [NuGet.ManifestMetadata] @{
     Tags = "PowerShell"
 }
 
-#Define package files
+#Define packaged files.
 $manifestFiles = @(
-    [NuGet.ManifestFile] @{ Target = "/content"; Source = "PSNuGet\**";}
+    [NuGet.ManifestFile] @{ Target = "/content"; Source = "PSNuGet\**"; Exclude = "PSNuGet\Tests\**"; }
 )
+
+if ($IncludeTestFiles){
+    $manifestFiles[0].Exclude = $null
+}
 
 #Set package BaseDir to  ".\PSNuGet
 $baseDir = Split-Path $PSScriptRoot -Parent
@@ -43,3 +50,5 @@ finally
 {
     $stream.Dispose()
 }
+
+
