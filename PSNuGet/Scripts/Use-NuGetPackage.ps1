@@ -110,7 +110,7 @@
                 Write-Verbose ($messages.LoadAssembly -f $item.Name, $item.TargetFramework)
                 #Note: Add-Type Cmdlet can't handle dependent assembly, when difference (compatible) version assembly is already loaded in AppDomain.
                 #Add-Type -Path $item.SourcePath
-                [Reflection.Assembly]::LoadFile($item.SourcePath)
+                [Reflection.Assembly]::LoadFile($item.SourcePath) > $null
                 $Script:LoadedAssemblyNames.Add($assemblyName)
             }
         }
