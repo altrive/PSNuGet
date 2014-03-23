@@ -60,8 +60,14 @@
     #Load dependent NuGet packages first
     foreach ($dependency in [NuGet.PackageExtensions]::GetCompatiblePackageDependencies($package, $frameworkName))
     {
+        #Resolve dependency to compatible stable version.(Need additional query to repository)
+        #$package = [NuGet.PackageRepositoryExtensions]::ResolveDependency($manager.SourceRepository, $dependency, $false, $true)
+        #Use-NuGetPackage -PackageId $package.Id -Version $package.Version
+       
         #TODO: How to resolve best version?
+        #TODO: Some NuGet packeges failed to resolve already loaded assembly at Add-Type?
         Use-NuGetPackage -PackageId $dependency.Id -Version $dependency.VersionSpec.MaxVersion
+        
     }
 
     #Get loaded assembly names
@@ -92,11 +98,19 @@
     {
         foreach ($item in $items)
         {
+             #Skip if Name is PackageEmptyFileName
+            if ($item.Name -eq "_._")
+            {
+                continue
+            }
+
             $assemblyName = [IO.Path]::GetFileNameWithoutExtension($item.Name)
             if ($assemblyName -notin $Script:LoadedAssemblyNames)
             {
                 Write-Verbose ($messages.LoadAssembly -f $item.Name, $item.TargetFramework)
-                Add-Type -Path $item.SourcePath
+                #Note: Add-Type Cmdlet can't handle dependent assembly, when difference (compatible) version assembly is already loaded in AppDomain.
+                #Add-Type -Path $item.SourcePath
+                [Reflection.Assembly]::LoadFile($item.SourcePath)
                 $Script:LoadedAssemblyNames.Add($assemblyName)
             }
         }
