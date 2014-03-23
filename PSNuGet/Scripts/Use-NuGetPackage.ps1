@@ -11,6 +11,9 @@
     $ErrorActionPreference = "Stop"
     Set-StrictMode -Version Latest
 
+    #Add NuGet package Id to script variable
+    $Script:LoadedPackageNames.Add($PackageId)
+
     #Initialize packagemanaer if not explicitly called
     if ($script:PackageManager -eq $null){
         Initialize-NuGetPackageManager -Verbose
@@ -49,9 +52,6 @@
         Write-Verbose ($messages.PackageInstalled -f $package.ToString())
     }
 
-    #Add NuGet package Id to script variable
-    $Script:LoadedPackageNames.Add($package.Id)
-
     #TODO:Need to determine exact FrameworkVersion
     [Runtime.Versioning.FrameworkName] $frameworkName = $null
     switch ($PSVersionTable.PSVersion){
@@ -71,12 +71,6 @@
         if (!$Script:LoadedPackageNames.Contains($dependency.Id)){
             Use-NuGetPackage -PackageId $dependency.Id -Version $dependency.VersionSpec.MaxVersion
         }
-    }
-
-    #Get loaded assembly names
-    if ($Script:LoadedAssemblyNames -eq $null)
-    {
-        $Script:LoadedAssemblyNames = [AppDomain]::CurrentDomain.GetAssemblies().GetName().Name
     }
 
     #Load framework assemblies 

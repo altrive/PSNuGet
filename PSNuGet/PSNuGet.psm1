@@ -12,7 +12,7 @@ if($null -eq $loadedDll)
 
 #Define script variables
 [NuGet.PackageManager]$Script:PackageManager = $null
-[Collections.Generic.List[string]] $Script:LoadedAssemblyNames = $null
+[Collections.Generic.List[string]] $Script:LoadedAssemblyNames = [AppDomain]::CurrentDomain.GetAssemblies().GetName().Name
 [Collections.Generic.List[string]] $Script:LoadedPackageNames = @()
 
 #Load script files using dot-souced
