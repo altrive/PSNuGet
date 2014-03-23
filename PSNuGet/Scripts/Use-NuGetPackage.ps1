@@ -28,8 +28,12 @@
         $package = $null
     }
 
-    #If package is not installed, do nothing, If local package is not found. install it.
-    if ($package -eq $null)
+    #If package is already installed, do nothing, If local package is not found. install it.
+    if ($package -ne $null)
+    {
+        Write-Verbose ($messages.UsePackage -f $package)
+    }
+    else
     {
         #Validate PackageId exists
         if (!($PackageManager.SourceRepository.Exists($PackageId, $Version))){
@@ -44,10 +48,9 @@
         $package = Find-LocalNuGetPackage -PackageId $PackageId -Version $Version
         Write-Verbose ($messages.PackageInstalled -f $package.ToString())
     }
-    else
-    {
-        Write-Verbose ($messages.UsePackage -f $package)
-    }
+
+    #Add NuGet package Id to script variable
+    $Script:LoadedPackageNames.Add($package.Id)
 
     #TODO:Need to determine exact FrameworkVersion
     [Runtime.Versioning.FrameworkName] $frameworkName = $null
@@ -64,16 +67,16 @@
         #$package = [NuGet.PackageRepositoryExtensions]::ResolveDependency($manager.SourceRepository, $dependency, $false, $true)
         #Use-NuGetPackage -PackageId $package.Id -Version $package.Version
        
-        #TODO: How to resolve best version?
-        #TODO: Some NuGet packeges failed to resolve already loaded assembly at Add-Type?
-        Use-NuGetPackage -PackageId $dependency.Id -Version $dependency.VersionSpec.MaxVersion
-        
+        #TODO: How to resolve best version? 
+        if (!$Script:LoadedPackageNames.Contains($dependency.Id)){
+            Use-NuGetPackage -PackageId $dependency.Id -Version $dependency.VersionSpec.MaxVersion
+        }
     }
 
     #Get loaded assembly names
-    if ($LoadedAssemblyNames -eq $null)
+    if ($Script:LoadedAssemblyNames -eq $null)
     {
-        $Script:LoadedAssemblyNames = [AppDomain]::CurrentDomain.GetAssemblies() | foreach { $_.GetName().Name }
+        $Script:LoadedAssemblyNames = [AppDomain]::CurrentDomain.GetAssemblies().GetName().Name
     }
 
     #Load framework assemblies 
@@ -98,7 +101,7 @@
     {
         foreach ($item in $items)
         {
-             #Skip if Name is PackageEmptyFileName
+            #Skip if Name is PackageEmptyFileName
             if ($item.Name -eq "_._")
             {
                 continue
