@@ -113,32 +113,6 @@
         }
     }
 
-    <#
-    #TODO:Handle native DLL(Example:Microsoft.Diagnostics.Tracing.TraceEvent NuGet package). Need to copy dlls to appropriate directory?
-    #Load Native DLLs if exists
-    $items = $null
-    [NuGet.VersionUtility]::TryGetCompatibleItems("native,Version=v0.0", $package.AssemblyReferences, [ref] $items) > $null
-    foreach ($item in $items)
-    {
-        if ($item.EffectivePath.StartsWith("x86") -and [Environment]::Is64BitProcess)
-        {
-            continue #Don't load x86 DLL to 64bit process
-        }
-        #Write-Verbose ($messages.LoadNativeDll -f $item.Name, $item.EffectivePath)
-
-        $paths = $env:Path.Split(';')
-        $nativeDir = (Split-Path $item.SourcePath -Parent)
-        if ($nativeDir -notin $paths)
-        {
-            Write-Verbose ("Add native dll path '{0}' to `$env:Path" -f $nativeDir)
-            $env:Path += ";" + $nativeDir
-        }
-
-        #Add-Type -Path $item.SourcePath
-        #$Script:LoadedAssemblyNames.Add($item.AssemblyName)
-    }
-    #>
-
     #Load PowerShell Module(.psm1) from Tools directory
     $toolFiles = [NuGet.PackageExtensions]::GetToolFiles($package)
     [NuGet.IPackageFile[]] $psModuleFiles = $toolFiles | where { $_.Path.EndsWith(".psm1")}
@@ -148,7 +122,7 @@
         foreach ($file in $psModuleFiles)
         {
             Write-Verbose ($messages.PSModuleImport -f $file.SourcePath)
-            Import-Module $file.SourcePath
+            Import-Module $file.SourcePath -Verbose:$false -Global #Import module to global scope
         }
     }
 

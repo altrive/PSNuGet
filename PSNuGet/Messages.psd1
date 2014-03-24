@@ -7,5 +7,5 @@
     LoadAssembly = "`tLoad assembly: {0} {1}"
     LoadFrameworkAssembly = "`tLoad .NET Framework assembly: {0}"
     LoadNativeDll = "`tLoad native DLL: {0} {1}"
-    PSModuleImport = "Import PowerShell module from: {0}"
+    PSModuleImport = "`tImport PowerShell module from: {0}"
 }
