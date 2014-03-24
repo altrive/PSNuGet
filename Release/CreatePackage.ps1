@@ -41,6 +41,8 @@ $builder.Populate($metadata)
 
 #Output NuGet package to BaseDir
 $packagePath = Join-Path $baseDir "Release\PSNuGet.nupkg"
+
+$stream = $null
 try
 {
     $stream = [IO.File]::Open($packagePath, [IO.FileMode]::Create)
@@ -48,7 +50,7 @@ try
 }
 finally
 {
-    $stream.Dispose()
+    if ($stream -ne $null){
+        $stream.Dispose()
+    }
 }
-
-
