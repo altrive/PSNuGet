@@ -65,11 +65,11 @@
     {
         #Resolve dependency to compatible stable version.(Need additional query to repository)
         #$package = [NuGet.PackageRepositoryExtensions]::ResolveDependency($manager.SourceRepository, $dependency, $false, $true)
-        #Use-NuGetPackage -PackageId $package.Id -Version $package.Version
+        #Use-NuGetPackage -PackageId $package.Id -Version $package.Version -Force:$Force
        
         #TODO: How to resolve best version? 
         if (!$Script:LoadedPackageNames.Contains($dependency.Id)){
-            Use-NuGetPackage -PackageId $dependency.Id -Version $dependency.VersionSpec.MaxVersion
+            Use-NuGetPackage -PackageId $dependency.Id -Version $dependency.VersionSpec.MaxVersion  -Force:$Force
         }
     }
 
