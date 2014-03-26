@@ -43,11 +43,11 @@
             Write-Error ($messages.PackageNotFound -f $PackageId, $Version)
         }
         
-        Write-Progress -Activity ($messages.InstallPackage -f $PackageId)
+        Write-Progress -Activity ($messages.InstallPackageProgress -f $PackageId)
         $manager.InstallPackage($PackageId, $Version, $true, $IncludePreRelease) #Ignore dependency(manually resolve it)
-        Write-Progress -Activity ($messages.InstallPackage -f $PackageId) -Complete
+        Write-Progress -Activity ($messages.InstallPackageProgress -f $PackageId) -Complete
         
-        #Write install log to verbose stream
+        #Write package install log to verbose stream(Loaded package name can't determined before installation)
         $package = Find-LocalNuGetPackage -PackageId $PackageId -Version $Version
         Write-Verbose ($messages.PackageInstalled -f $package.ToString())
     }
