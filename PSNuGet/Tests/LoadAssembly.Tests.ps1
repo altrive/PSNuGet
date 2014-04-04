@@ -78,14 +78,11 @@ TestFixture "Install NuGet Package(.NET)"{
         IsAssemblyLoaded ("Microsoft.IdentityModel.Clients.ActiveDirectory") | should be $true
         IsAssemblyLoaded ("Microsoft.IdentityModel.Clients.ActiveDirectory.WindowsForms") | should be $true
     }
-}
 
-TestFixture "Install NuGet Package(Load PSModule under /tools)"{
-    TestCase "Pester"{
-        Use-NuGetPackage -PackageId "Pester"
-        Get-Module Pester | should not be null
+    TestCase "StackExchange.Redis"{
+        Use-NuGetPackage -PackageId "StackExchange.Redis"
+        IsAssemblyLoaded ("StackExchange.Redis") | should be $true
     }
 
 }
-
 
