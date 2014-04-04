@@ -4,6 +4,7 @@
 $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest
 
+#TODO:Load NuGet.Core.dll instead
 Use-NuGetPackage NuGet.Core #-Verbose
 
 $metadata = [NuGet.ManifestMetadata] @{

@@ -9,8 +9,7 @@ function Main
 
     #Create NuGet package
     $path = Join-Path $PSScriptRoot "CreatePackage.ps1" -Resolve
-    Write-Host $path
-    Invoke-Expression -Command "$path -IncludeTestFiles" -Verbose
+    Invoke-Expression -Command "$path" -Verbose
     #Invoke-Command -FilePath $path -ArgumentList @()
     $packagePath = Join-Path $PSScriptRoot "PSNuGet.nupkg" -Resolve
 
