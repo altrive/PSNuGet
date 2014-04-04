@@ -69,7 +69,7 @@
        
         #TODO: How to resolve best version? 
         if (!$Script:LoadedPackageNames.Contains($dependency.Id)){
-            Use-NuGetPackage -PackageId $dependency.Id -Version $dependency.VersionSpec.MaxVersion  -Force:$Force
+            Use-NuGetPackage -PackageId $dependency.Id -Version $dependency.VersionSpec.MaxVersion -Force:$Force
         }
     }
 
@@ -113,12 +113,11 @@
         }
     }
 
-    #Load PowerShell Module(.psm1) from Tools directory
+    #Load PowerShell Module(.psm1) from "tools" directory
     $toolFiles = [NuGet.PackageExtensions]::GetToolFiles($package)
     [NuGet.IPackageFile[]] $psModuleFiles = $toolFiles | where { $_.Path.EndsWith(".psm1")}
     if ($psModuleFiles -ne $null)
     {
-        #Import .psm1 script files under "tools" directory, if exists.
         foreach ($file in $psModuleFiles)
         {
             Write-Verbose ($messages.PSModuleImport -f $file.SourcePath)
@@ -126,10 +125,15 @@
         }
     }
 
-    #TODO:Import content files under "content" directory 
-    <#
-    foreach ($file in [NuGet.PackageExtensions]::GetContentFiles($package)){
-        #Write-Verbose $file.EffectivePath
+    #Import PowerShell Module(.psm1) from "content" directory
+    $contentFiles = [NuGet.PackageExtensions]::GetContentFiles($package)
+    [NuGet.IPackageFile[]] $psModuleFiles = $contentFiles | where { $_.Path.EndsWith(".psm1")}
+    if ($psModuleFiles -ne $null)
+    {
+        foreach ($file in $psModuleFiles)
+        {
+            Write-Verbose ($messages.PSModuleImport -f $file.SourcePath)
+            Import-Module $file.SourcePath -Verbose:$false -Global #Import module to global scope
+        }
     }
-    #>
 }
