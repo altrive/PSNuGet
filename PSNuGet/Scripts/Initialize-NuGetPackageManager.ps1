@@ -2,7 +2,6 @@
 {
     [CmdletBinding()]
     param (
-        [hashtable] $Repository = [ordered] @{},
         [switch] $IgnoreFailingRepositories = $false,
         [switch] $UseOfficialRepository = $true,
         [switch] $UseChocolateyRepository = $false,
@@ -11,38 +10,37 @@
     $ErrorActionPreference = "Stop"
     Set-StrictMode -Version Latest
 
+    $repositories = New-Object System.Collections.Generic.List[string]
+
     #Add repository path from environment variable if exists.
-　　if($env:PSNUGET_REPOSITORY_PATH -ne $null)
+    if ($env:PSNuGetRepository -ne $null)
     {
-        $paths = $env:PSNUGET_REPOSITORY_PATH -split ";"
-        foreach($path in $paths)
+        $paths = $env:PSNuGetRepository -split ";"
+        foreach ($path in $paths)
         {
-            if(!$Repository.Contains($path))
+            if (!$repositories.Contains($path))
             {
-                $Repository.Add("OfficialRepository", $path)
+                $repositories.Add($path)
             }
         }
     }
     
     #Setup official NuGet repository paths(Default:$true)
     $officialRepository = "https://packages.nuget.org/api/v2"
-    if ($UseOfficialRepository -and !$Repository.ContainsValue($officialRepository))
+    if ($UseOfficialRepository -and !$repositories.Contains($officialRepository))
     {
-        $Repository.Add("OfficialRepository", $officialRepository)
+        $repositories.Add($officialRepository)
     }
 
     #Setup chocolatey repository paths(Default:$false)
     $chocolateyRepository = "http://chocolatey.org/api/v2/"
-    if ($UseChocolateyRepository -and !$Repository.ContainsValue($chocolateyRepository))
+    if ($UseChocolateyRepository -and !$repositories.Contains($chocolateyRepository))
     {
-        $Repository.Add("ChocolateyRepository", $chocolateyRepository)
+        $repositories.Add($chocolateyRepository)
     }
-      
-    #Convert repositories to string array
-    [string[]] $packageSources = $Repository.Values | select
 
     #Create NuGet repository
-    $nugetRepository = New-Object NuGet.AggregateRepository([NuGet.PackageRepositoryFactory]::Default, $packageSources, $IgnoreFailingRepositories)
+    $nugetRepository = New-Object NuGet.AggregateRepository([NuGet.PackageRepositoryFactory]::Default, $repositories, $IgnoreFailingRepositories)
 
     #Set NuGet package directory(if not specified, use %MyDocuments%\WindowsPowerShell\packages)
     if ([String]::IsNullOrEmpty($PackageInstallPath))
